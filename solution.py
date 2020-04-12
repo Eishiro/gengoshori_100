@@ -255,10 +255,6 @@ def cipher(str:str):
     #つまり、ローマ字小文字 a～z について z～a に入れ替えるという暗号化になっていますね。
     #ちなみに 219 - (219 - n) = n なので、２回cipher関数を通すと元の文字列に戻ります。#
     #
-    #
-
-
-
 def cipher2(s: str) -> str:
     """
     渡された英文を暗号化します
@@ -272,11 +268,83 @@ def cipher2(s: str) -> str:
     return ''.join(chr(219 - ord(c)) if 'a' <= c <= 'z' else c for c in s)
 
 
+#09. Typoglycemia
+#random https://note.nkmk.me/python-random-randrange-randint/
+def random_sort_word(sentence: str):
+    """
+    スペースで区切られた単語列に対して，各単語の先頭と末尾の文字は残し，それ以外の文字の順序をランダムに並び替えるプログラムを作成せよ．
+    ただし，長さが４以下の単語は並び替えないこととする．適当な英語の文
+    （例えば"I couldn't believe that I could actually understand what I was reading : the phenomenal power of the human mind ."）
+    を与え，その実行結果を確認せよ．
+    """
+    import random
+    sentence = "I couldn't believe that I could actually understand what I was reading : the phenomenal power of the human mind ."
+    words = sentence.split(' ')
+
+    shuffle_sentence = []
+    for word in words:
+        if len (word) < 4:
+            shuffle_sentence.append(word)
+        else:
+            #get the letters from a word except the first and the end
+            shuffle_part = list(word[1:-1])
+            #random.sample rreturn a new list after shuffled.
+            rand = random.sample(shuffle_part, k=len(shuffle_part))
+            shuffled_word = word[0:1] + ''.join(rand) + word[-1:]
+            shuffle_sentence.append(shuffled_word)
+
+    return print(shuffle_sentence)
+
+
+
+##################
+######2nd UNIX#####
+
+#hightemp.txtは，日本の最高気温の記録を「都道府県」「地点」「℃」「日」のタブ区切り形式で格納したファイルである．
+#以下の処理を行うプログラムを作成し，hightemp.txtを入力ファイルとして実行せよ．
+#さらに，同様の処理をUNIXコマンドでも実行し，プログラムの実行結果を確認せよ．
+
+#wget http://www.cl.ecei.tohoku.ac.jp/nlp100/data/hightemp.txt
+
+#10 10. 行数のカウント
+def count_row(file_path):
+    """
+    行数をカウントせよ．確認にはwcコマンドを用いよ．
+    $ wc -l hightemp.txt
+    >>24 hightemp.txt
+    """
+    #file_path = "hightemp.txt"
+    with open(file_path,'r') as f:
+        lines= f.readlines()
+    return len(lines)
+
+def count_row2(file_path):
+    count =0
+    with open(file_path, "r") as f:
+        for line in f:
+            count +=1
+    print(count)
+
+
+#11. タブをスペースに置換
+
+def replace_tab_space(sentence: str):
+    """
+    タブ1文字につきスペース1文字に置換せよ．確認にはsedコマンド，trコマンド，もしくはexpandコマンドを用いよ．
+
+    """
+    with open(file_path,'r') as f:
+        lines= f.readlines()
+        #lines.replace('/t',' ')\
+        replaced_lines = map(lambda s: s.replace('\t',' '), lines)
+    return list(replaced_lines)
+
+
+
 def main():
     #bigram_calc("paraparaparadise","paragraph")
-    create_template(12,"temp",22.4)
-
-
+    count_row("hightemp.txt")
+    replace_tab_space("hightemp.txt")
 
 
 if __name__ == "__main__":
