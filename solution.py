@@ -314,13 +314,13 @@ def count_row(file_path):
     >>24 hightemp.txt
     """
     #file_path = "hightemp.txt"
-    with open(file_path,'r') as f:
+    with open(file_path,'r', encoding="utf-8") as f:
         lines= f.readlines()
     return len(lines)
 
 def count_row2(file_path):
     count =0
-    with open(file_path, "r") as f:
+    with open(file_path, "r",encoding="utf-8") as f:
         for line in f:
             count +=1
     print(count)
@@ -328,24 +328,74 @@ def count_row2(file_path):
 
 #11. タブをスペースに置換
 
-def replace_tab_space(sentence: str):
+def replace_tab_space(file_path):
     """
     タブ1文字につきスペース1文字に置換せよ．確認にはsedコマンド，trコマンド，もしくはexpandコマンドを用いよ．
-
     """
-    with open(file_path,'r') as f:
+    with open(file_path,encoding="utf-8") as f:
         lines= f.readlines()
         #lines.replace('/t',' ')\
         replaced_lines = map(lambda s: s.replace('\t',' '), lines)
     return list(replaced_lines)
 
 
+#12 12. 1列目をcol1.txtに，2列目をcol2.txtに保存
+def save_file(file_path):
+    """
+    各行の1列目だけを抜き出したものをcol1.txtに，2列目だけを抜き出したものをcol2.txtとしてファイルに保存せよ．
+    確認にはcutコマンドを用いよ．
+    """
+    with open(file_path, "r", encoding= 'utf-8') as f:
+        lines = f.readlines()
+        col1 = list(map(lambda line : line.split('\t')[0], lines))
+        #print(col1)
+    with open ("col1.txt", "w") as file:
+        file.write(" ".join(col1))
+
+    with open(file_path, "r", encoding= 'utf-8') as f:
+        lines = f.readlines()
+        col2 = list(map(lambda line : line.split('\t')[1], lines))
+        #print(col2)
+    with open ("col2.txt", "w") as file:
+        file.write(" ".join(col2))
+
+def save_file2(file_path):
+    import pandas as pd
+    data = pd.read_table(file_path, header = None, sep = '\t',encoding ='utf-8')
+    data[0].to_csv('col1.txt', header =None,index = False)
+    data[1].to_csv('col2.txt', header =None,index = False) 
+
+#13. col1.txtとcol2.txtをマージ
+
+def merge_txt():
+    """
+    12で作ったcol1.txtとcol2.txtを結合し，
+    元のファイルの1列目と2列目をタブ区切りで並べたテキストファイルを作成せよ．
+    確認にはpasteコマンドを用いよ
+    """    
+    save_file("hightemp.txt")
+    with open("col1.txt") as f:
+        col1 = f.readline()
+        col1 = col1.split(" ")
+        #print(col1)
+
+    with open("col2.txt") as f:
+        col2 = f.readline()
+        col2 = col2.split(" ")
+       # print(col2)
+
+    #lines_zip = zip(col1,col2)
+    #lines = "".join(map(lambda x: ''.join(x),lines_zip))
+
+    #lines = "{col1}\t{col2}".format(col1=col1,col2=col2)
+    lines = ["{0}\t{1}".format(line1, line2) for line1, line2 in zip(col1, col2)]
+    print(lines)
+
 
 def main():
     #bigram_calc("paraparaparadise","paragraph")
-    count_row("hightemp.txt")
-    replace_tab_space("hightemp.txt")
-
+    #count_row2("hightemp.txt")
+    merge_txt()
 
 if __name__ == "__main__":
     main()
