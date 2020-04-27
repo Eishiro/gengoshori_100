@@ -180,9 +180,9 @@ def split_file2(file_path):
         lines = f.readlines()
         d = math.ceil(len(lines) / s)
 
-            for i in range (0, len(lines),d):
-                file ="split._{:02d}txt".format(j)
-                write_file(file, lines[i:i+d])
+        for i in range (0, len(lines),d):
+            file ="split._{:02d}txt".format(j)
+            write_file(file, lines[i:i+d])
 
 def write_file(file_path,str):
     with open (file_path, "a") as file:
@@ -192,7 +192,6 @@ def write_file(file_path,str):
 def split (t,s):
     import math
     d = math.ceil(len(t)/s)
-
     for i in range(0, len(t), d):
         j = i + d
         print(t[i:j])
@@ -230,23 +229,88 @@ done
 #17.１列目の文字列の異なり
 def get_unique(file_path):
     """
-    1列目の文字列の種類（異なる文字列の集合）を求めよ．確認にはsort, uniqコマンドを用いよ．
+    1列目の文字列の種類(異なる文字列の集合)を求めよ．
+    確認にはsort, uniqコマンドを用いよ．
     """
+    with open(file_path) as f:
+        data = f.readlines()
+        col1 = list(map(lambda list:list.split("\t")[0], data))
+        set_col1 = set(col1)
+        print(set_col1)
+
+def get_unique2(file_path):
+    import pandas as pd
+    data = pd.read_table(file_path, header = None, sep = '\t',encoding ='utf-8')
+    col1_unique = set(data[0])
+
+#unix
+# 先頭カラムを切り出し、ソート、重複除去
+#cut --fields=1 hightemp.txt | sort | uniq > result_test.txt
 
 #18 各行を3コラム目の数値の降順にソート
-def sort():
+def sort(file_path):
     """
     各行を3コラム目の数値の逆順で整列せよ（注意: 各行の内容は変更せずに並び替えよ）．
     確認にはsortコマンドを用いよ（この問題はコマンドで実行した時の結果と合わなくてもよい）．
     """
+    file_path ="hightemp.txt"
+    with open(file_path) as f:
+        data = f.readlines()
+        data.sort(key=lambda data: float(data.split('\t')[2]), reverse=True)
+        return(data)
 
+def get_third(df):
+    return df.split('\t')[2]
+def sort2(file_path):
+    """
+    各行を3コラム目の数値の逆順で整列せよ（注意: 各行の内容は変更せずに並び替えよ）．
+    確認にはsortコマンドを用いよ（この問題はコマンドで実行した時の結果と合わなくてもよい）．
+    """
+    file_path ="hightemp.txt"
+    with open(file_path) as f:
+        data = f.readlines()
+        data.sort(key = get_third)
+        return(data)
+
+
+#18 各行を3コラム目の数値の降順にソート
+def sort3(file_path,n:int):
+    """
+    各行を3コラム目の数値の逆順で整列せよ（注意: 各行の内容は変更せずに並び替えよ）．
+    確認にはsortコマンドを用いよ（この問題はコマンドで実行した時の結果と合わなくてもよい）．
+    """
+    import pandas as pd
+    data = pd.read_table(file_path, header = None, sep = '\t',encoding ='utf-8')
+    data.sort_values(by=n)
+
+#UNIX
+## 3カラム目を数値として逆順ソート
+#sort hightemp.txt --key=3,3 --numeric-sort --reverse > result_test.txt
 
 
 #19 各行の1コラム目の文字列の出現頻度を求め，出現頻度の高い順に並べる
-def freq_sort():
+def freq_sort(file_path):
     """
     各行の1列目の文字列の出現頻度を求め，その高い順に並べて表示せよ．確認にはcut, uniq, sortコマンドを用いよ．
     """
+    #file_path ="hightemp.txt"
+    word_count = {} #{山形県: 2, ....}
+    with open(file_path) as f:
+        data = f.readlines()
+        col1 = list(map(lambda list:list.split("\t")[0], data))
+        for element in col1:
+            if not element in word_count:
+                word_count[element] = 1
+            else:
+                word_count[element] += 1
+        #list_word_count = [ k  for k in word_count ]
+        #list_word_count = [ v  for v in word_count(vlaue) ]
+        list_word_count = [[ k,v ] for k,v in word_count.items() ]
+        list_word_count.sort(key = lambda list:list[1],reverse = True)
+    return list_word_count
+
+## 1カラム目でソートし、重複除去して件数付きで出力、その結果をソート
+#cut --fields=1 hightemp.txt | sort | uniq --count | sort --reverse
 
 
 def main():
@@ -254,7 +318,11 @@ def main():
     #count_row2("hightemp.txt")
     #l = [i for i in range(30)]
     #split(l,3)
-    split_file("hightemp.txt")
+    #split_file("hightemp.txt")
     #print(l)
+    #result = sort2("hightemp.txt")
+    #print(result)
+    l =freq_sort("hightemp.txt")
+    print(l)
 if __name__ == "__main__":
     main()
